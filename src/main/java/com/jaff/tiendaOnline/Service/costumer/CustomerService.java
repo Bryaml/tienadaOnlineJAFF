@@ -66,7 +66,9 @@ public class CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
         customer.setName(updatedCustomer.getName());
         customer.setLastName(updatedCustomer.getLastName());
-        // Set other fields as needed
+        customer.setPassword(updatedCustomer.getPassword());
+        customer.setPhone(updatedCustomer.getPassword());
+
         return customerRepository.save(customer);
     }
 

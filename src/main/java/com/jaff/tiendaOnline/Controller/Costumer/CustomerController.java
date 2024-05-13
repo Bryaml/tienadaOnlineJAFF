@@ -13,7 +13,6 @@ public class CustomerController {
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-
     @PostMapping("/register")
     public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.registerCustomer(customer);
@@ -24,19 +23,16 @@ public class CustomerController {
         customerService.forgetPassword(request.getEmail());
         return ResponseEntity.ok().build();
     }
-
     @GetMapping("/{customerId}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
         Customer customer = customerService.getCustomerById(customerId);
         return ResponseEntity.ok(customer);
     }
-
     @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody Customer updatedCustomer) {
         Customer customer = customerService.updateCustomer(customerId, updatedCustomer);
         return ResponseEntity.ok(customer);
     }
-
     @DeleteMapping("/{customerId}")
     public ResponseEntity<?> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
