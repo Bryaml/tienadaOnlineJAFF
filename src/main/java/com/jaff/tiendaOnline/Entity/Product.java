@@ -16,7 +16,16 @@ public class Product {
     private int stock;
     private double price;
     private String category;
+    private String subcategory;
     // getters and setters
+
+    public String getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
 
     public Long getProductId() {
         return productId;

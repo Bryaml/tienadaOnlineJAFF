@@ -18,7 +18,10 @@ public class Orders {
     private Customer customer;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderDetails> orderDetails = new ArrayList<>();
+    private List<OrderDetails> orderDetails;
+    public List<OrderDetails> getOrderDetails() {
+        return orderDetails;
+    }
     // getters and setters
 
     public Long getOrderId() {

@@ -5,6 +5,8 @@ import com.jaff.tiendaOnline.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
 
@@ -23,7 +25,6 @@ public class ProductService {
     public Product updateProduct(Long productId, Product updatedProduct) {
         Product product = getProductById(productId);
 
-        // Update all fields
         product.setName(updatedProduct.getName());
         product.setDescription(updatedProduct.getDescription());
         product.setPrice(updatedProduct.getPrice());
@@ -34,5 +35,12 @@ public class ProductService {
 
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
+    }
+
+    public List<Product> getProductsByCategory(String category) {
+        return productRepository.findByCategory(category);
+    }
+    public List<String> findDistinctSubcategoriesByCategory(String category) {
+        return productRepository.findDistinctSubcategoriesByCategory(category);
     }
 }
