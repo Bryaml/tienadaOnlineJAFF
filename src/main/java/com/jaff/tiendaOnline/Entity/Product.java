@@ -1,12 +1,11 @@
 package com.jaff.tiendaOnline.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+
+import java.util.List;
 
 @Entity
-
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,16 +16,11 @@ public class Product {
     private double price;
     private String category;
     private String subcategory;
-    // getters and setters
 
-    public String getSubcategory() {
-        return subcategory;
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images;
 
-    public void setSubcategory(String subcategory) {
-        this.subcategory = subcategory;
-    }
-
+    // Getters and Setters
     public Long getProductId() {
         return productId;
     }
@@ -73,5 +67,21 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public List<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 }

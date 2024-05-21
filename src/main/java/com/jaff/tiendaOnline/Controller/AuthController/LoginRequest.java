@@ -3,8 +3,8 @@ package com.jaff.tiendaOnline.Controller.AuthController;
 public class LoginRequest {
     private String email;
     private String password;
-    // getters and setters
 
+    // Getters y setters
     public String getEmail() {
         return email;
     }

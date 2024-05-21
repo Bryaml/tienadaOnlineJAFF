@@ -33,6 +33,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwtToken = null;
         String requestURL = request.getRequestURL().toString();
+
         // JWT Token está en el encabezado del formato "Bearer token". Remueve la palabra Bearer y obtén solamente el Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
@@ -65,4 +66,3 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
-

@@ -6,33 +6,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long productId) {
-        Product product = productService.getProductById(productId);
-        return ResponseEntity.ok(product);
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    public ResponseEntity<Product> addProduct(@RequestParam String name,
+                                              @RequestParam String description,
+                                              @RequestParam int stock,
+                                              @RequestParam double price,
+                                              @RequestParam String category,
+                                              @RequestParam String subcategory,
+                                              @RequestParam("images") List<MultipartFile> images) {
+        try {
+            Product product = new Product();
+            product.setName(name);
+            product.setDescription(description);
+            product.setStock(stock);
+            product.setPrice(price);
+            product.setCategory(category);
+            product.setSubcategory(subcategory);
+
+            List<byte[]> imageBytes = new ArrayList<>();
+            for (MultipartFile image : images) {
+                imageBytes.add(image.getBytes());
+            }
+
+            Product createdProduct = productService.addProduct(product, imageBytes);
+            return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+        } catch (IOException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product updatedProduct) {
-        Product product = productService.updateProduct(productId, updatedProduct);
-        return ResponseEntity.ok(product);
-    }
+
+
+
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {

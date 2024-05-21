@@ -30,7 +30,6 @@ public class AuthController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
@@ -49,7 +48,7 @@ public class AuthController {
             if (passwordEncoder.matches(password, customer.getPassword())) {
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 final String token = jwtTokenUtil.generateToken(userDetails);
-                return ResponseEntity.ok(new JwtResponse(token , "Login exitoso"));
+                return ResponseEntity.ok(new JwtResponse(token, "Login exitoso", customer.getRole()));
             }
         }
 

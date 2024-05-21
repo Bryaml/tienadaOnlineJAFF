@@ -52,6 +52,10 @@ public class Orders {
         return customer;
     }
 
+    public void setOrderDetails(List<OrderDetails> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
