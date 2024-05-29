@@ -7,9 +7,7 @@ import com.jaff.tiendaOnline.Repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 @Service
 public class ProductService {
@@ -24,13 +22,13 @@ public class ProductService {
     }
 
     @Transactional
-    public Product addProduct(Product product, List<byte[]> images) {
+    public Product addProduct(Product product, List<String> images) {
         product = productRepository.save(product);
 
-        for (byte[] image : images) {
+        for (String imagePath : images) {
             ProductImage productImage = new ProductImage();
             productImage.setProduct(product);
-            productImage.setImage(image);
+            productImage.setImagePath(imagePath);
             productImageRepository.save(productImage);
         }
 

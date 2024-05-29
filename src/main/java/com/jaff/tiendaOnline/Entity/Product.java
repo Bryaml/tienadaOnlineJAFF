@@ -16,9 +16,8 @@ public class Product {
     private double price;
     private String category;
     private String subcategory;
+    private String imagePath;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductImage> images;
 
     // Getters and Setters
     public Long getProductId() {
@@ -77,11 +76,12 @@ public class Product {
         this.subcategory = subcategory;
     }
 
-    public List<ProductImage> getImages() {
-        return images;
+
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImages(List<ProductImage> images) {
-        this.images = images;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

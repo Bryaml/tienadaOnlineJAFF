@@ -8,9 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -24,32 +30,64 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestParam String name,
-                                              @RequestParam String description,
-                                              @RequestParam int stock,
-                                              @RequestParam double price,
-                                              @RequestParam String category,
-                                              @RequestParam String subcategory,
-                                              @RequestParam("images") List<MultipartFile> images) {
-        try {
-            Product product = new Product();
-            product.setName(name);
-            product.setDescription(description);
-            product.setStock(stock);
-            product.setPrice(price);
-            product.setCategory(category);
-            product.setSubcategory(subcategory);
+    public ResponseEntity<?> createProduct(@RequestParam("name") String name,
+                                           @RequestParam("description") String description,
+                                           @RequestParam("stock") int stock,
+                                           @RequestParam("price") double price,
+                                           @RequestParam("category") String category,
+                                           @RequestParam("subcategory") String subcategory,
+                                           @RequestPart(required = false) List<MultipartFile> images) {
+        Product product = new Product();
+        product.setName(name);
+        product.setDescription(description);
+        product.setStock(stock);
+        product.setPrice(price);
+        product.setCategory(category);
+        product.setSubcategory(subcategory);
 
-            List<byte[]> imageBytes = new ArrayList<>();
-            for (MultipartFile image : images) {
-                imageBytes.add(image.getBytes());
+        try {
+            List<String> imagePaths = new ArrayList<>();
+            if (images != null && !images.isEmpty()) {
+                for (MultipartFile image : images) {
+                    String imagePath = saveImage(image);
+                    imagePaths.add(imagePath);
+                }
             }
 
-            Product createdProduct = productService.addProduct(product, imageBytes);
-            return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-        } catch (IOException e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            Product savedProduct = productService.addProduct(product, imagePaths);
+            return ResponseEntity.ok(savedProduct);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el producto.");
         }
+    }
+
+
+    private String saveImage(MultipartFile image) throws IOException {
+        String uploadDir = System.getProperty("user.dir") + "/uploads";
+        System.out.println("Upload directory: " + uploadDir);
+
+        File uploadDirFile = new File(uploadDir);
+        if (!uploadDirFile.exists()) {
+            uploadDirFile.mkdirs();
+        }
+
+        // Check write permissions
+        if (!uploadDirFile.canWrite()) {
+            throw new IOException("Cannot write to upload directory: " + uploadDir);
+        }
+
+        String originalFileName = image.getOriginalFilename();
+        String uniqueFileName = System.currentTimeMillis() + "_" + originalFileName;
+        String filePath = uploadDir + File.separator + uniqueFileName;
+
+        Path destinationPath = Paths.get(filePath);
+        Files.copy(image.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Log the file path for debugging
+        System.out.println("Image saved to: " + filePath);
+
+        return "/uploads/" + uniqueFileName;
     }
 
 

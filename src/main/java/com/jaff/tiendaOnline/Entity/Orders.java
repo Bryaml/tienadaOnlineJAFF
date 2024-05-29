@@ -48,10 +48,12 @@ public class Orders {
         this.status = status;
     }
 
-    public Customer getCustomer() {
+    public Customer zx () {
         return customer;
     }
+/*
 
+* */
     public void setOrderDetails(List<OrderDetails> orderDetails) {
         this.orderDetails = orderDetails;
     }
