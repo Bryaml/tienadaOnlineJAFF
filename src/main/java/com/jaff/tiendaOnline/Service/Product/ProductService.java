@@ -13,26 +13,22 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductImageRepository productImageRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ProductImageRepository productImageRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.productImageRepository = productImageRepository;
     }
 
     @Transactional
-    public Product addProduct(Product product, List<String> images) {
-        product = productRepository.save(product);
-
-        for (String imagePath : images) {
+    public Product addProduct(Product product, List<String> imagePaths) {
+        for (String imagePath : imagePaths) {
             ProductImage productImage = new ProductImage();
-            productImage.setProduct(product);
             productImage.setImagePath(imagePath);
-            productImageRepository.save(productImage);
+            productImage.setProduct(product);
+            product.getImages().add(productImage);
         }
 
-        return product;
+        return productRepository.save(product);
     }
 
 
@@ -46,4 +42,8 @@ public class ProductService {
     public List<String> findDistinctSubcategoriesByCategory(String category) {
         return productRepository.findDistinctSubcategoriesByCategory(category);
     }
+    public List<Product> getProductsByCategoryAndSubcategory(String category, String subcategory) {
+        return productRepository.findByCategoryAndSubcategory(category, subcategory);
+    }
+
 }

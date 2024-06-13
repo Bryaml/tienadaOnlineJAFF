@@ -52,7 +52,7 @@ public class CustomerService {
     }
 
     private String generateNewPassword() {
-        // Genera una cadena aleatoria de 8 caracteres que incluye letras y números
+
         return RandomStringUtils.randomAlphanumeric(8);
     }
 

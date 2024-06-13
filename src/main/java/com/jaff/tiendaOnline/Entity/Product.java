@@ -1,8 +1,10 @@
 package com.jaff.tiendaOnline.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,9 +18,10 @@ public class Product {
     private double price;
     private String category;
     private String subcategory;
-    private String imagePath;
 
-
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ProductImage> images = new ArrayList<>();
     // Getters and Setters
     public Long getProductId() {
         return productId;
@@ -76,12 +79,11 @@ public class Product {
         this.subcategory = subcategory;
     }
 
-
-    public String getImagePath() {
-        return imagePath;
+    public List<ProductImage> getImages() {
+        return images;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 }

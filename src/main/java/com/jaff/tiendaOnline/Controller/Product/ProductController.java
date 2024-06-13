@@ -2,9 +2,11 @@ package com.jaff.tiendaOnline.Controller.Product;
 
 import com.jaff.tiendaOnline.Entity.Product;
 import com.jaff.tiendaOnline.Service.Product.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,22 +32,24 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProduct(@RequestParam("name") String name,
-                                           @RequestParam("description") String description,
-                                           @RequestParam("stock") int stock,
-                                           @RequestParam("price") double price,
-                                           @RequestParam("category") String category,
-                                           @RequestParam("subcategory") String subcategory,
-                                           @RequestPart(required = false) List<MultipartFile> images) {
-        Product product = new Product();
-        product.setName(name);
-        product.setDescription(description);
-        product.setStock(stock);
-        product.setPrice(price);
-        product.setCategory(category);
-        product.setSubcategory(subcategory);
-
+    public ResponseEntity<?> createProduct(HttpServletRequest request,
+                                           @RequestParam(required = false) List<MultipartFile> images) {
         try {
+            String name = request.getParameter("name");
+            String description = request.getParameter("description");
+            int stock = Integer.parseInt(request.getParameter("stock"));
+            double price = Double.parseDouble(request.getParameter("price"));
+            String category = request.getParameter("category");
+            String subcategory = request.getParameter("subcategory");
+
+            Product product = new Product();
+            product.setName(name);
+            product.setDescription(description);
+            product.setStock(stock);
+            product.setPrice(price);
+            product.setCategory(category);
+            product.setSubcategory(subcategory);
+
             List<String> imagePaths = new ArrayList<>();
             if (images != null && !images.isEmpty()) {
                 for (MultipartFile image : images) {
@@ -62,36 +66,22 @@ public class ProductController {
         }
     }
 
-
     private String saveImage(MultipartFile image) throws IOException {
-        String uploadDir = System.getProperty("user.dir") + "/uploads";
-        System.out.println("Upload directory: " + uploadDir);
+        String uploadDir = "uploads";
+        Path uploadPath = Paths.get(uploadDir);
 
-        File uploadDirFile = new File(uploadDir);
-        if (!uploadDirFile.exists()) {
-            uploadDirFile.mkdirs();
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
 
-        // Check write permissions
-        if (!uploadDirFile.canWrite()) {
-            throw new IOException("Cannot write to upload directory: " + uploadDir);
-        }
-
-        String originalFileName = image.getOriginalFilename();
+        String originalFileName = StringUtils.cleanPath(image.getOriginalFilename());
         String uniqueFileName = System.currentTimeMillis() + "_" + originalFileName;
-        String filePath = uploadDir + File.separator + uniqueFileName;
+        Path filePath = uploadPath.resolve(uniqueFileName);
 
-        Path destinationPath = Paths.get(filePath);
-        Files.copy(image.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Log the file path for debugging
-        System.out.println("Image saved to: " + filePath);
+        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return "/uploads/" + uniqueFileName;
     }
-
-
-
 
 
     @DeleteMapping("/{productId}")
@@ -109,4 +99,10 @@ public class ProductController {
     public List<String> getDistinctSubcategoriesByCategory(@PathVariable String category) {
         return productService.findDistinctSubcategoriesByCategory(category);
     }
+    @GetMapping("/category/{category}/subcategory/{subcategory}")
+    public ResponseEntity<List<Product>> getProductsByCategoryAndSubcategory(@PathVariable String category, @PathVariable String subcategory) {
+        List<Product> products = productService.getProductsByCategoryAndSubcategory(category, subcategory);
+        return ResponseEntity.ok(products);
+    }
+
 }
