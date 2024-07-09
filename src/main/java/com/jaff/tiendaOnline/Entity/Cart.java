@@ -1,7 +1,14 @@
 package com.jaff.tiendaOnline.Entity;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
+
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Cart {
@@ -13,10 +20,32 @@ public class Cart {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Añadir esta anotación
     private List<CartItem> cartItems;
 
-    // Otros atributos y métodos si es necesario
+    // Getters y setters
+    public Long getCartId() {
+        return cartId;
+    }
 
-    // Constructor, getters y setters
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public List<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
 }

@@ -18,7 +18,6 @@ public class Product {
     private double price;
     private String category;
     private String subcategory;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductImage> images = new ArrayList<>();

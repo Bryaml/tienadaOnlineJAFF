@@ -31,7 +31,6 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
     }
@@ -39,11 +38,16 @@ public class ProductService {
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategory(category);
     }
+
     public List<String> findDistinctSubcategoriesByCategory(String category) {
         return productRepository.findDistinctSubcategoriesByCategory(category);
     }
+
     public List<Product> getProductsByCategoryAndSubcategory(String category, String subcategory) {
         return productRepository.findByCategoryAndSubcategory(category, subcategory);
     }
 
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId).orElse(null);
+    }
 }

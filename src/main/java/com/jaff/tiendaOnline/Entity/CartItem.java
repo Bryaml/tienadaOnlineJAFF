@@ -3,14 +3,17 @@ package com.jaff.tiendaOnline.Entity;
 
 import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartItemId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
+    @JsonBackReference // Añadir esta anotación
     private Cart cart;
 
     @ManyToOne
@@ -19,27 +22,13 @@ public class CartItem {
 
     private int quantity;
 
-    public CartItem() {
+    // Getters y setters
+    public Long getId() {
+        return id;
     }
 
-    // Otros atributos y métodos si es necesario
-
-    // Constructor, getters y setters
-
-
-    public CartItem(Long cartItemId, Cart cart, Product product, int quantity) {
-        this.cartItemId = cartItemId;
-        this.cart = cart;
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public Long getCartItemId() {
-        return cartItemId;
-    }
-
-    public void setCartItemId(Long cartItemId) {
-        this.cartItemId = cartItemId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Cart getCart() {

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+/*el boo */
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -83,26 +83,33 @@ public class ProductController {
         return "/uploads/" + uniqueFileName;
     }
 
-
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String category) {
-        List<Product> products = productService.getProductsByCategory(category);
-        return ResponseEntity.ok(products);
-    }
     @GetMapping("/categories/{category}/subcategories")
     public List<String> getDistinctSubcategoriesByCategory(@PathVariable String category) {
         return productService.findDistinctSubcategoriesByCategory(category);
     }
+
     @GetMapping("/category/{category}/subcategory/{subcategory}")
     public ResponseEntity<List<Product>> getProductsByCategoryAndSubcategory(@PathVariable String category, @PathVariable String subcategory) {
         List<Product> products = productService.getProductsByCategoryAndSubcategory(category, subcategory);
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
+        System.out.println("Fetching product with ID: " + productId);
+        Product product = productService.getProductById(productId);
+        if (product != null) {
+            System.out.println("Product found: " + product.getName());
+            return ResponseEntity.ok(product);
+        } else {
+            System.out.println("Product not found for ID: " + productId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 }

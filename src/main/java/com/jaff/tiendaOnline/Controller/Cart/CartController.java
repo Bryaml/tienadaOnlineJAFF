@@ -6,8 +6,11 @@ import com.jaff.tiendaOnline.Service.cart.CartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
+
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/cart")
 public class CartController {
 
     private final CartService cartService;
@@ -17,7 +20,7 @@ public class CartController {
     }
 
     @PostMapping("/{cartId}/items")
-    public ResponseEntity<CartItem> addItemToCart(@PathVariable Long cartId, @RequestBody CartItem cartItem) {
+    public ResponseEntity<CartItem> addItemToCart(@PathVariable(required = false) Long cartId, @RequestBody CartItem cartItem) {
         CartItem addedItem = cartService.addItemToCart(cartId, cartItem);
         return ResponseEntity.ok(addedItem);
     }
@@ -25,8 +28,18 @@ public class CartController {
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCartById(@PathVariable Long cartId) {
         Cart cart = cartService.getCartById(cartId);
+        if (cart == null) {
+            throw new RuntimeException("Cart not found with id: " + cartId);
+        }
         return ResponseEntity.ok(cart);
     }
+
+    @PostMapping("/new")
+    public ResponseEntity<Cart> createNewCart() {
+        Cart newCart = cartService.createNewCart();
+        return ResponseEntity.ok(newCart);
+    }
+
 
     @PutMapping("/{cartId}/items/{cartItemId}")
     public ResponseEntity<CartItem> updateCartItemQuantity(
@@ -43,5 +56,9 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
-    // Otros métodos para procesar el pago, vaciar el carrito, etc.
+    @DeleteMapping("/{cartId}/clear")
+    public ResponseEntity<?> clearCart(@PathVariable Long cartId) {
+        cartService.clearCart(cartId);
+        return ResponseEntity.ok().build();
+    }
 }
