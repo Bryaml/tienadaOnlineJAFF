@@ -20,14 +20,29 @@ public class CartController {
     }
 
     @PostMapping("/{cartId}/items")
-    public ResponseEntity<CartItem> addItemToCart(@PathVariable(required = false) Long cartId, @RequestBody CartItem cartItem) {
-        CartItem addedItem = cartService.addItemToCart(cartId, cartItem);
+    public ResponseEntity<CartItem> addItemToCart(
+            @RequestHeader(value = "User-Role", defaultValue = "guest") String userRole,
+            @PathVariable(required = false) Long cartId,
+            @RequestBody CartItem cartItem) {
+        CartItem addedItem;
+        if ("guest".equals(userRole)) {
+            addedItem = cartService.addItemToCart(null, cartItem); // Guest cart
+        } else {
+            addedItem = cartService.addItemToCart(cartId, cartItem); // Registered user cart
+        }
         return ResponseEntity.ok(addedItem);
     }
 
     @GetMapping("/{cartId}")
-    public ResponseEntity<Cart> getCartById(@PathVariable Long cartId) {
-        Cart cart = cartService.getCartById(cartId);
+    public ResponseEntity<Cart> getCartById(
+            @RequestHeader(value = "User-Role", defaultValue = "guest") String userRole,
+            @PathVariable Long cartId) {
+        Cart cart;
+        if ("guest".equals(userRole)) {
+            cart = cartService.getCartById(cartId); // Guest cart
+        } else {
+            cart = cartService.getCartById(cartId); // Registered user cart
+        }
         if (cart == null) {
             throw new RuntimeException("Cart not found with id: " + cartId);
         }
@@ -35,30 +50,54 @@ public class CartController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Cart> createNewCart() {
-        Cart newCart = cartService.createNewCart();
+    public ResponseEntity<Cart> createNewCart(
+            @RequestHeader(value = "User-Role", defaultValue = "guest") String userRole) {
+        Cart newCart;
+        if ("guest".equals(userRole)) {
+            newCart = cartService.createNewCart(); // Guest cart
+        } else {
+            newCart = cartService.createNewCart(); // Registered user cart
+        }
         return ResponseEntity.ok(newCart);
     }
 
-
     @PutMapping("/{cartId}/items/{cartItemId}")
     public ResponseEntity<CartItem> updateCartItemQuantity(
+            @RequestHeader(value = "User-Role", defaultValue = "guest") String userRole,
             @PathVariable Long cartId,
             @PathVariable Long cartItemId,
             @RequestParam int quantity) {
-        CartItem updatedItem = cartService.updateCartItemQuantity(cartId, cartItemId, quantity);
+        CartItem updatedItem;
+        if ("guest".equals(userRole)) {
+            updatedItem = cartService.updateCartItemQuantity(cartId, cartItemId, quantity); // Guest cart
+        } else {
+            updatedItem = cartService.updateCartItemQuantity(cartId, cartItemId, quantity); // Registered user cart
+        }
         return ResponseEntity.ok(updatedItem);
     }
 
     @DeleteMapping("/{cartId}/items/{cartItemId}")
-    public ResponseEntity<?> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long cartItemId) {
-        cartService.removeItemFromCart(cartId, cartItemId);
+    public ResponseEntity<?> removeItemFromCart(
+            @RequestHeader(value = "User-Role", defaultValue = "guest") String userRole,
+            @PathVariable Long cartId,
+            @PathVariable Long cartItemId) {
+        if ("guest".equals(userRole)) {
+            cartService.removeItemFromCart(cartId, cartItemId); // Guest cart
+        } else {
+            cartService.removeItemFromCart(cartId, cartItemId); // Registered user cart
+        }
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{cartId}/clear")
-    public ResponseEntity<?> clearCart(@PathVariable Long cartId) {
-        cartService.clearCart(cartId);
+    public ResponseEntity<?> clearCart(
+            @RequestHeader(value = "User-Role", defaultValue = "guest") String userRole,
+            @PathVariable Long cartId) {
+        if ("guest".equals(userRole)) {
+            cartService.clearCart(cartId); // Guest cart
+        } else {
+            cartService.clearCart(cartId); // Registered user cart
+        }
         return ResponseEntity.ok().build();
     }
 }

@@ -29,19 +29,16 @@ public class CartService {
     public CartItem addItemToCart(Long cartId, CartItem cartItem) {
         Cart cart;
         if (cartId == null || !cartRepository.existsById(cartId)) {
-            // Crear un nuevo carrito solo si no existe uno con el cartId proporcionado
             cart = new Cart();
             cart.setCartItems(new ArrayList<>());
             cart = cartRepository.save(cart);
         } else {
-            // Si ya existe un carrito con el cartId, reutilizarlo
             cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart not found with id: " + cartId));
         }
 
         Product product = productRepository.findById(cartItem.getProduct().getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + cartItem.getProduct().getProductId()));
 
-        // Verificar si el stock del producto es suficiente
         if (product.getStock() < cartItem.getQuantity()) {
             throw new RuntimeException("Product " + product.getName() + " is not available in sufficient quantity.");
         }
@@ -49,18 +46,17 @@ public class CartService {
         cartItem.setCart(cart);
         cartItem.setProduct(product);
 
-        // Actualizar el stock del producto
         product.setStock(product.getStock() - cartItem.getQuantity());
         productRepository.save(product);
 
         return cartItemRepository.save(cartItem);
     }
+
     public Cart createNewCart() {
         Cart cart = new Cart();
         cart.setCartItems(new ArrayList<>());
         return cartRepository.save(cart);
     }
-
 
     public Cart getCartById(Long cartId) {
         return cartRepository.findById(cartId)
