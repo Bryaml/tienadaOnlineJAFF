@@ -17,7 +17,7 @@ public class EmailService {
         message.setFrom("soporte@jaffantoniofigueroa.com");
         message.setTo(customer.getEmail());
         message.setSubject("Bienvenido a nuestra Tienda de Antonio Figueroa JAFF");
-        message.setText("Hola " + customer.getName() + ",\n\nGracias por registrarte en nuestra Tienda online. \n\nSaludos,\nEl equipo de nuestra aplicación");
+        message.setText("Hola " + customer.getName() + ",\n\nGracias por registrarte en nuestra Tienda online. \n\nSaludos,\nEl equipo de JAFF");
         mailSender.send(message);
     }
 
