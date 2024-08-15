@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Product {
@@ -21,7 +22,21 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductImage> images = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "favoriteProducts")
+    private Set<Customer> customers;
     // Getters and Setters
+
+
+    public Set<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(Set<Customer> customers) {
+        this.customers = customers;
+    }
+
     public Long getProductId() {
         return productId;
     }

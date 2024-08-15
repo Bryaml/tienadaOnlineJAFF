@@ -1,47 +1,33 @@
-package com.jaff.tiendaOnline.Entity;
+package com.jaff.tiendaOnline.Controller.AddressController;
 
-import jakarta.persistence.*;
+import com.jaff.tiendaOnline.Entity.Address;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Entity
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class AddressDTO {
     private Long addressId;
-    private String firstName;
-    private String lastName;
     private String streetNumber;
     private String cp;
     private String state;
     private String city;
     private String village;
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
 
-    // Getters y Setters
+    public AddressDTO(Address address) {
+        this.addressId = address.getAddressId();
+        this.streetNumber = address.getStreetNumber();
+        this.cp = address.getCp();
+        this.state = address.getState();
+        this.city = address.getCity();
+        this.village = address.getVillage();
+    }
 
+    // Getters and setters
     public Long getAddressId() {
         return addressId;
     }
 
     public void setAddressId(Long addressId) {
         this.addressId = addressId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getStreetNumber() {
@@ -82,13 +68,5 @@ public class Address {
 
     public void setVillage(String village) {
         this.village = village;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 }

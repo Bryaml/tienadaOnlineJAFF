@@ -1,5 +1,6 @@
 package com.jaff.tiendaOnline.Controller.Costumer;
 
+import com.jaff.tiendaOnline.Controller.AuthController.CustomerDTO;
 import com.jaff.tiendaOnline.Entity.Customer;
 import com.jaff.tiendaOnline.Service.costumer.CustomerService;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,12 @@ public class CustomerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {
-        System.out.println("Registering customer: " + customer);
-        Customer savedCustomer = customerService.registerCustomer(customer);
+    public ResponseEntity<Customer> registerCustomer(@RequestBody CustomerDTO customerDTO) {
+        System.out.println("Registering customer: " + customerDTO);
+        Customer savedCustomer = customerService.registerCustomer(customerDTO);
         return ResponseEntity.ok(savedCustomer);
     }
+
 
     @PostMapping("/forgetPassword")
     public ResponseEntity<Void> forgetPassword(@RequestBody ForgetPasswordRequest request) {
@@ -44,4 +46,6 @@ public class CustomerController {
         customerService.deleteCustomer(customerId);
         return ResponseEntity.ok().build();
     }
+
+
 }

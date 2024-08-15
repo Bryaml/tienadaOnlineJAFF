@@ -48,7 +48,9 @@ public class AuthController {
             if (passwordEncoder.matches(password, customer.getPassword())) {
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 final String token = jwtTokenUtil.generateToken(userDetails);
-                return ResponseEntity.ok(new JwtResponse(token, "Login exitoso", customer.getRole()));
+                CustomerDTO customerDTO = new CustomerDTO(customer);
+                System.out.println("CustomerDTO: " + customerDTO);
+                return ResponseEntity.ok(new JwtResponse(token, "Login exitoso", customerDTO));
             }
         }
 

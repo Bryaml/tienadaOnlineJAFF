@@ -1,8 +1,12 @@
 package com.jaff.tiendaOnline.Service.costumer;
 
+import com.jaff.tiendaOnline.Controller.AuthController.CustomerDTO;
+import com.jaff.tiendaOnline.Entity.Address;
 import com.jaff.tiendaOnline.Entity.Customer;
+import com.jaff.tiendaOnline.Repository.AddressRepository;
 import com.jaff.tiendaOnline.Repository.CustomerRepository;
 import com.jaff.tiendaOnline.Service.EmailService.EmailService;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +19,8 @@ public class CustomerService {
     private final EmailService emailService;
     private final CustomerRepository customerRepository;
     @Autowired
+    private AddressRepository addressRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public CustomerService(EmailService emailService, CustomerRepository customerRepository) {
@@ -22,14 +28,33 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer registerCustomer(Customer customer) {
-        // Codifica la contraseña antes de guardar el cliente
-        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+    @Transactional
+    public Customer registerCustomer(CustomerDTO customerDTO) {
+        Customer customer = new Customer();
+        customer.setName(customerDTO.getName());
+        customer.setLastName(customerDTO.getLastName());
+        customer.setEmail(customerDTO.getEmail());
+        customer.setPassword(passwordEncoder.encode(customerDTO.getPassword())); // Encriptar la contraseña
+        customer.setPhone(customerDTO.getPhone());
+        customer.setRole("USER"); // Asignar un rol por defecto
+
+        // Guardar la información del cliente
         Customer savedCustomer = customerRepository.save(customer);
-        // Envía el correo de registro
-        emailService.sendRegistrationEmail(savedCustomer);
+
+        // Guardar la dirección del cliente
+        Address address = new Address();
+        address.setStreetNumber(customerDTO.getStreetNumber());
+        address.setCp(customerDTO.getCp());
+        address.setState(customerDTO.getState());
+        address.setCity(customerDTO.getCity());
+        address.setVillage(customerDTO.getVillage());
+        address.setCustomer(savedCustomer);
+
+        addressRepository.save(address);
+
         return savedCustomer;
     }
+
 
     public void forgetPassword(String email) {
         // Busca al cliente por su correo electrónico
@@ -77,4 +102,5 @@ public class CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
         customerRepository.delete(customer);
     }
+
 }
